@@ -40,7 +40,7 @@ function updateDataset() {
 	const table = sheet.getSheetValues(1, 1, sheet.getLastRow(), sheet.getLastColumn());
 
 	const jsonData = [];
-	const heading = table[0].map(h => h.toLowerCase());
+	const heading = table[0].map((h) => h.toLowerCase());
 	table.forEach((row, index) => {
 		if (index == 0) return;
 		const entry = {};
@@ -55,5 +55,18 @@ function updateDataset() {
 	Logger.log("Parsed all the data");
 	Logger.log(JSON.stringify(jsonData, null, 2));
 
-	// TODO: Trigger github action with that data.
+	UrlFetchApp.fetch(
+		`https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`,
+		{
+			method: "post",
+			headers: {
+				Accept: "application/vnd.github+json",
+				Authorization: `Bearer ${GITHUB_PAT_TOKEN}`,
+			},
+			payload: JSON.stringify({
+				ref: "main",
+				inputs: { jsonData },
+			}),
+		},
+	);
 }
