@@ -53,20 +53,39 @@ function updateDataset() {
 	});
 
 	Logger.log("Parsed all the data");
-	Logger.log(JSON.stringify(jsonData, null, 2));
+	// Logger.log(JSON.stringify(jsonData, null, 2));
 
-	UrlFetchApp.fetch(
+	const properties = PropertiesService.getScriptProperties();
+
+	const GITHUB_REPO = properties.getProperty("GITHUB_REPO");
+	const WORKFLOW_ID = properties.getProperty("WORKFLOW_ID");
+	const GITHUB_PAT_TOKEN = properties.getProperty("GITHUB_PAT_TOKEN");
+
+	const dataLen = JSON.stringify(jsonData).length;
+	Logger.log(dataLen);
+
+	Logger.log(GITHUB_REPO);
+	Logger.log(GITHUB_PAT_TOKEN);
+	Logger.log(WORKFLOW_ID);
+
+	const response = UrlFetchApp.fetch(
 		`https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`,
 		{
 			method: "post",
+			contentType: "application/json",
 			headers: {
+				"X-GitHub-Api-Version": "2026-03-10",
 				Accept: "application/vnd.github+json",
 				Authorization: `Bearer ${GITHUB_PAT_TOKEN}`,
+				"Content-Type": "application/json",
 			},
 			payload: JSON.stringify({
 				ref: "main",
-				inputs: { jsonData },
+				inputs: {
+					jsonData: JSON.stringify(jsonData),
+				},
 			}),
 		},
 	);
+	Logger.log(JSON.stringify(response, null, 2));
 }
