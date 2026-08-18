@@ -37,7 +37,6 @@ function updateDataset() {
 
 	Logger.log("Access Granted, Proceeding with processing data!!");
 
-	// TODO: Get all the file in valid parsable json format.
 	const table = sheet.getSheetValues(1, 1, sheet.getLastRow(), sheet.getLastColumn());
 
 	const jsonData = [];

@@ -1,0 +1,10 @@
+name: Download Datasource and generate embeddings
+
+on: workflow_dispatch
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: testing
+        run: echo "this thing is running heck yeah!"
