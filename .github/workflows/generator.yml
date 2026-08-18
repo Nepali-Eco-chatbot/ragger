@@ -1,10 +1,15 @@
 name: Download Datasource and generate embeddings
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      jsonData:
+        required: true
+        type: string
 
 jobs:
-  testing:
+  download-and-gen-embeddings:
     runs-on: ubuntu-latest
     steps: 
-      - name: testing
-        run: echo "this thing is running heck yeah!"
+      - name: "parsing inputs" 
+        run: echo ${{inputs.jsonData}}
