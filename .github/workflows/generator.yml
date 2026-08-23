@@ -12,4 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: "parsing inputs" 
-        run: echo ${{inputs.jsonData}}
+        env:
+          jsonData: ${{inputs.jsonData}}
+        run: echo "$jsonData"
