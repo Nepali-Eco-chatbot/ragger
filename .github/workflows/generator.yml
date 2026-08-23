@@ -10,8 +10,16 @@ on:
 jobs:
   download-and-gen-embeddings:
     runs-on: ubuntu-latest
-    steps: 
-      - name: "parsing inputs" 
+    steps:  
+      - name: "Checking out the repo"
+        uses: actions/checkout@v4 
+
+      - name: "Installing bun"
+        uses: oven-sh/setup-bun@v2
+
+      - name: "Trigger Script" 
         env:
           jsonData: ${{inputs.jsonData}}
-        run: echo "$jsonData"
+        run: |
+          echo "Running the script"
+          bun run embedder/index.ts "$jsonData"
