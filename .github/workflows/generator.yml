@@ -17,6 +17,11 @@ jobs:
       - name: "Installing bun"
         uses: oven-sh/setup-bun@v2
 
+      - name: "Installing deps"
+        run: | 
+          cd embedder
+          bun i 
+
       - name: "Trigger Script" 
         env:
           jsonData: ${{inputs.jsonData}}
