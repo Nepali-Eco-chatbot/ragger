@@ -1,4 +1,5 @@
 import { pipeline } from "@huggingface/transformers";
+import type { TJSONData } from "./types/base";
 
 const args = Bun.argv.slice(2);
 
@@ -14,7 +15,7 @@ if (!mayBeJsonData) {
 }
 
 try {
-	const jsonData = JSON.parse(mayBeJsonData);
+	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 	console.log(jsonData);
 } catch (e) {
 	console.error("Invalid json data provided");
@@ -22,11 +23,11 @@ try {
 }
 
 //Embedding generation.
-const extractor = await pipeline("feature-extraction", "intfloat/multilingual-e5-small");
+// const extractor = await pipeline("feature-extraction", "intfloat/multilingual-e5-small");
+//
+// const output = await extractor("This is the test", {
+// 	normalize: true,
+// 	pooling: "mean",
+// });
 
-const output = await extractor("This is the test", {
-	normalize: true,
-	pooling: "mean",
-});
-
-console.log(output);
+// console.log(output);
