@@ -16,11 +16,11 @@ export const downloadFile = async (jsonData: TJSONData, name: string): Promise<B
 			await Bun.write(path, file);
 			return true;
 		} catch (e) {
-			console.log("Something went wrong while writing the file");
+			console.error("Something went wrong while writing the file");
 			return false;
 		}
 	} catch (e) {
-		console.log("Something went wrong while Downloading the file");
+		console.error("Something went wrong while Downloading the file", e);
 		return false;
 	}
 };

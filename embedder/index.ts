@@ -1,6 +1,5 @@
-import { pipeline } from "@huggingface/transformers";
+import { dataProcesser } from "./helpers/data-processor";
 import type { TJSONData } from "./types/base";
-
 const args = Bun.argv.slice(2);
 
 if (args.length === 0) {
@@ -16,18 +15,10 @@ if (!mayBeJsonData) {
 
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
-	console.log(jsonData);
+	const promisses = jsonData.map(async (data, index) => await dataProcesser(data, index));
+
+	Promise.all(promisses);
 } catch (e) {
 	console.error("Invalid json data provided");
 	process.exit(1);
 }
-
-//Embedding generation.
-// const extractor = await pipeline("feature-extraction", "intfloat/multilingual-e5-small");
-//
-// const output = await extractor("This is the test", {
-// 	normalize: true,
-// 	pooling: "mean",
-// });
-
-// console.log(output);
