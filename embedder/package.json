@@ -1,11 +1,21 @@
 {
 	"name": "embedder",
-	"module": "index.ts",
-	"type": "module",
 	"private": true,
+	"type": "module",
+	"module": "index.ts",
 	"scripts": {
+		"setup:docling": "curl -fsSL https://raw.githubusercontent.com/docling-project/docling.rs/master/scripts/install/download_dependencies.sh | sh",
+		"setup:tokenizer": "wget https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/tokenizer.json",
+		"setup": "bun run --parallel 'setup:*'",
 		"test": "bun test",
 		"db:push": "drizzle-kit push"
+	},
+	"dependencies": {
+		"@huggingface/transformers": "^4.2.0",
+		"@libsql/client": "^0.17.4",
+		"docling.rs": "^1.19.0",
+		"drizzle-orm": "^1.0.0-rc.4",
+		"sharp": "^0.35.4"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.4.0",
@@ -13,11 +23,5 @@
 	},
 	"peerDependencies": {
 		"typescript": "^5"
-	},
-	"dependencies": {
-		"@huggingface/transformers": "^4.2.0",
-		"@libsql/client": "^0.17.4",
-		"drizzle-orm": "^1.0.0-rc.4",
-		"sharp": "^0.35.4"
 	}
 }
