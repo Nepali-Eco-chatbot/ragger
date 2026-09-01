@@ -8,6 +8,13 @@ import { Embedder } from "./embedder";
 
 const embedder = await new Embedder().init();
 
+/**
+ * max of chunks to be processed at once.
+ *
+ * By processed I mean, generating embedding and inserting to the database.
+ */
+const BATCH_SIZE = 50;
+
 export const dataProcesser = async (data: TJSONData, _index: number) => {
 	const stringData = JSON.stringify(data);
 	const isAlreadyEmbeded = await checkHashStore(stringData);
@@ -22,21 +29,27 @@ export const dataProcesser = async (data: TJSONData, _index: number) => {
 		return;
 	}
 
-	if (data.type === "SEARCH_SOURCE") {
-		return;
-	}
-
 	const knwSourceId = await db.insert(knw_sources).values({
 		id: entryHash,
 		...data,
 	});
 
-	const chunkedData = chunkData({ fileName, data });
-	const embeddedChunks: Promise<TEmbeddedChunk>[] = [];
-
-	for await (const chunk of chunkedData) {
-		embeddedChunks.push(embedder.embed(chunk.contextualized));
+	if (data.type === "SEARCH_SOURCE") {
+		return;
 	}
 
-	await Promise.all(embeddedChunks);
+	const chunkedData = chunkData({ fileName, data });
+	let embeddedChunks: Promise<TEmbeddedChunk>[] = [];
+
+	for await (const chunk of chunkedData) {
+		if (embeddedChunks.length < BATCH_SIZE) {
+			embeddedChunks.push(embedder.embed(chunk.contextualized));
+			continue;
+		}
+
+		const results = await Promise.all(embeddedChunks);
+		// TODO: batch update the database.
+
+		embeddedChunks = [];
+	}
 };

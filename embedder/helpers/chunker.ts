@@ -2,7 +2,7 @@ import type { TJSONData } from "../types/base";
 import { streamFileChunks, type Chunk } from "docling.rs";
 import { join } from "node:path";
 
-const tokenizerPath = join(process.cwd(), "./tokenizer.json");
+const tokenizerPath = join(process.cwd(), "./downloads/tokenizer.json");
 
 /**
  * Return the chunk stream from the provided doc 
