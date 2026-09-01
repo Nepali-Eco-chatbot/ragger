@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { customType, index, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { customType, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // Define the Turso Vector custom type
 export const float32Array = customType<{
@@ -19,18 +19,22 @@ export const float32Array = customType<{
 	},
 });
 
-// processed knowledge base
+/**
+ * processed knowledge base
+ */
 export const pknw_base = sqliteTable("pknw_base", {
 	embedding: float32Array("embedding", {
 		dimensions: 384, // embedding length of the model being used https://huggingface.co/intfloat/multilingual-e5-small
 	}).notNull(),
 	content: text().notNull(),
 	page_number: int(),
-	source: int().references(() => knw_sources.id, { onDelete: "cascade" }),
+	source: text().references(() => knw_sources.id, { onDelete: "cascade" }),
 });
 
-// will be called when the db runs
-// see ./index.ts:12
+/**
+ * will be called when the db runs
+ * see ./index.ts:10
+ */
 export const pknw_base_idx = sql`
   CREATE INDEX IF NOT EXISTS documents_embedding_idx 
   ON ${pknw_base}(libsql_vector_idx(embedding, 'metric=cosine'));

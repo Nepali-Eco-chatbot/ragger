@@ -2,7 +2,7 @@ import type { TEmbeddedChunk, TJSONData } from "../types/base";
 import { checkHashStore, updateHashStore } from "./hash";
 import { downloadFile } from "./downloader";
 import { db } from "../db";
-import { knw_sources } from "../db/schema";
+import { knw_sources, pknw_base } from "../db/schema";
 import { chunkData } from "./chunker";
 import { Embedder } from "./embedder";
 
@@ -15,6 +15,16 @@ const embedder = await new Embedder().init();
  */
 const BATCH_SIZE = 50;
 
+/**
+ * Processes the given `TJSONData` in the following order.
+ * - checks if already processed.
+ * - if yes ends the execution.
+ * - if not generates a hash and store it in hash-store.
+ * - downloads the file.
+ * - generates the embeddable chunks.
+ * - batches in a group of `BATCH_SIZE` items.
+ * - generates embedding and inserts into the database.
+ */
 export const dataProcesser = async (data: TJSONData, _index: number) => {
 	const stringData = JSON.stringify(data);
 	const isAlreadyEmbeded = await checkHashStore(stringData);
@@ -29,7 +39,7 @@ export const dataProcesser = async (data: TJSONData, _index: number) => {
 		return;
 	}
 
-	const knwSourceId = await db.insert(knw_sources).values({
+	await db.insert(knw_sources).values({
 		id: entryHash,
 		...data,
 	});
@@ -48,8 +58,16 @@ export const dataProcesser = async (data: TJSONData, _index: number) => {
 		}
 
 		const results = await Promise.all(embeddedChunks);
-		// TODO: batch update the database.
+		const values = results.map((result) => {
+			return {
+				source: entryHash,
+				content: result.chunk,
+				embedding: result.embedding,
+			};
+		});
 
+		// we don't need to batch because we are performing only insert operation.
+		await db.insert(pknw_base).values(values);
 		embeddedChunks = [];
 	}
 };

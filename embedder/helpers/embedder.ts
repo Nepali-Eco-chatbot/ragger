@@ -24,7 +24,7 @@ export class Embedder {
 
 		return {
 			chunk,
-			embedding: embedding.data,
+			embedding: Array.from(embedding.data as Float32Array),
 		};
 	};
 }
