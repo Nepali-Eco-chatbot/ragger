@@ -25,7 +25,7 @@ const BATCH_SIZE = 50;
  * - batches in a group of `BATCH_SIZE` items.
  * - generates embedding and inserts into the database.
  */
-export const dataProcesser = async (data: TJSONData, _index: number) => {
+export const dataProcesser = async (data: TJSONData) => {
 	const stringData = JSON.stringify(data);
 	const isAlreadyEmbeded = await checkHashStore(stringData);
 	if (isAlreadyEmbeded) return;

@@ -19,9 +19,10 @@ if (!process.env.DATABASE_URL || !process.env.DATABASE_AUTH_TOKEN) {
 
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
-	const promisses = jsonData.map(async (data, index) => await dataProcesser(data, index));
 
-	Promise.all(promisses);
+	for (let data of jsonData) {
+		await dataProcesser(data);
+	}
 } catch (e) {
 	console.error("Invalid json data provided");
 	process.exit(1);
