@@ -24,6 +24,7 @@ try {
 		await dataProcesser(data);
 	}
 } catch (e) {
+	console.log(e);
 	console.error("Invalid json data provided");
 	process.exit(1);
 }
