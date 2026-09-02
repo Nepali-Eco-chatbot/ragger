@@ -28,7 +28,10 @@ const BATCH_SIZE = 50;
 export const dataProcesser = async (data: TJSONData) => {
 	const stringData = JSON.stringify(data);
 	const isAlreadyEmbeded = await checkHashStore(stringData);
-	if (isAlreadyEmbeded) return;
+	if (isAlreadyEmbeded) {
+		console.log("Hash already present skipping!");
+		return;
+	}
 
 	const entryHash = await updateHashStore(stringData);
 	const fileName = `${entryHash}.${data.type}`;

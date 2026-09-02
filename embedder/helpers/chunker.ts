@@ -5,7 +5,7 @@ import { join } from "node:path";
 const tokenizerPath = join(process.cwd(), "./downloads/tokenizer.json");
 
 /**
- * Return the chunk stream from the provided doc 
+ * Return the chunk stream from the provided doc
  */
 export const chunkData = ({
 	fileName,
@@ -14,6 +14,11 @@ export const chunkData = ({
 	data: TJSONData;
 }): AsyncGenerator<Chunk, void, unknown> => {
 	const filePath = join(process.cwd(), fileName);
+
+	console.log({
+		filePath,
+		tokenizerPath,
+	});
 
 	return streamFileChunks(filePath, {
 		chunker: "hybrid",
