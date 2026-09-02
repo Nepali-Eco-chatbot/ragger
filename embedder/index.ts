@@ -13,6 +13,10 @@ if (!mayBeJsonData) {
 	process.exit(1);
 }
 
+if (!process.env.DATABASE_URL || !process.env.DATABASE_AUTH_TOKEN) {
+	throw new Error("Invalid env setup");
+}
+
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 	const promisses = jsonData.map(async (data, index) => await dataProcesser(data, index));
