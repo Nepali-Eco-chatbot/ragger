@@ -17,14 +17,17 @@ jobs:
       - name: "Installing bun"
         uses: oven-sh/setup-bun@v2
 
-      - name: "Installing deps"
+      - name: "Setup embedder"
         run: | 
           cd embedder
           bun i 
+          bun run setup
 
-      - name: "Trigger Script" 
+      - name: "Pipeline" 
         env:
           jsonData: ${{inputs.jsonData}}
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+          DATABASE_AUTH_TOKEN: ${{secrets.DATABASE_AUTH_TOKEN}}
         run: |
           echo "Running the script"
           bun run embedder/index.ts "$jsonData"
