@@ -10,6 +10,7 @@ on:
 jobs:
   download-and-gen-embeddings:
     runs-on: ubuntu-latest
+    environment: ragger
     steps:  
       - name: "Checking out the repo"
         uses: actions/checkout@v4 
@@ -22,11 +23,6 @@ jobs:
           cd embedder
           bun i 
           bun run setup
-
-      - name: "setting up env"
-        run: |
-          echo "DATABASE_URL=${{secrets.DATABASE_URL}}" >> .env 
-          echo "DATABASE_AUTH_TOKEN=${{secrets.DATABASE_AUTH_TOKEN}}" >> .env
 
       - name: "Pipeline" 
         env:
