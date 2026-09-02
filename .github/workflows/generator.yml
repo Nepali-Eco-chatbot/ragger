@@ -10,7 +10,6 @@ on:
 jobs:
   download-and-gen-embeddings:
     runs-on: ubuntu-latest
-    environment: production
     steps:  
       - name: "Checking out the repo"
         uses: actions/checkout@v4 
@@ -24,11 +23,14 @@ jobs:
           bun i 
           bun run setup
 
+      - name: "setting up env"
+        run: |
+          echo "DATABASE_URL=${{secrets.DATABASE_URL}}" >> .env 
+          ehco "DATABASE_AUTH_TOKEN=${{secrets.DATABASE_AUTH_TOKEN}}" >> .env
+
       - name: "Pipeline" 
         env:
           jsonData: ${{inputs.jsonData}}
-          DATABASE_URL: ${{secrets.DATABASE_URL}}
-          DATABASE_AUTH_TOKEN: ${{secrets.DATABASE_AUTH_TOKEN}}
         run: |
           echo "Running the script"
           bun run embedder/index.ts "$jsonData"
