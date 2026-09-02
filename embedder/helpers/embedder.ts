@@ -6,7 +6,11 @@ export class Embedder {
 	constructor() { }
 
 	async init() {
-		this.extractor = await pipeline("feature-extraction", "intfloat/multilingual-e5-small");
+		try {
+			this.extractor = await pipeline("feature-extraction", "intfloat/multilingual-e5-small");
+		} catch (e) {
+			console.error("Pipeline error:", e);
+		}
 		return this;
 	}
 
@@ -24,7 +28,7 @@ export class Embedder {
 
 		return {
 			chunk,
-			embedding: Array.from(embedding.data as Float32Array),
+			embedding: embedding.tolist(),
 		};
 	};
 }

@@ -64,6 +64,7 @@ export const dataProcesser = async (data: TJSONData) => {
 
 	for await (const chunk of chunkedData) {
 		if (embeddedChunks.length < BATCH_SIZE) {
+			console.log("embedding chunks");
 			embeddedChunks.push(embedder.embed(chunk.contextualized));
 			continue;
 		}
