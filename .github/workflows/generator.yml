@@ -33,8 +33,9 @@ jobs:
           DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
           jsonData: ${{inputs.jsonData}}
         run: |
+          cd embedder
           echo "Running the script"
-          bun run embedder/index.ts "$jsonData"
+          bun run index.ts "$jsonData"
 
       - name: "update the hash-store"
         run: |
