@@ -27,6 +27,11 @@ jobs:
           bun i 
           bun run setup
 
+      - name: "testing things"
+        run: | 
+          cd embedder
+          bun run test
+
       - name: "Pipeline" 
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -36,11 +41,6 @@ jobs:
           cd embedder
           echo "Running the script"
           bun run index.ts "$jsonData"
-
-      - name: "testing things"
-        run: | 
-          cd embedder
-          bun run test
 
       - name: "update the hash-store"
         if: always()
