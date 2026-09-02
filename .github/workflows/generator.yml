@@ -7,6 +7,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   download-and-gen-embeddings:
     runs-on: ubuntu-latest
@@ -32,3 +35,12 @@ jobs:
         run: |
           echo "Running the script"
           bun run embedder/index.ts "$jsonData"
+
+      - name: "update the hash-store"
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add hash-store
+          git commit -m "[automated] updating hash-store"
+          git push origin main

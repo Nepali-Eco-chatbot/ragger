@@ -21,7 +21,9 @@ try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 
 	for (let data of jsonData) {
+		console.log(`[Processing]: ${JSON.stringify(data)}`);
 		await dataProcesser(data);
+		console.log(`[done]: ✅`);
 	}
 } catch (e) {
 	console.log(e);
