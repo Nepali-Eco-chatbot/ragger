@@ -51,13 +51,16 @@ export const dataProcesser = async (data: TJSONData) => {
 		id: entryHash,
 		...data,
 	});
+	console.log("✅ database updated");
 
 	if (data.type === "SEARCH_SOURCE") {
 		return;
 	}
 
+	console.log("Chunking data");
 	const chunkedData = chunkData({ fileName, data });
 	let embeddedChunks: Promise<TEmbeddedChunk>[] = [];
+	console.log("✅ data chunked");
 
 	for await (const chunk of chunkedData) {
 		if (embeddedChunks.length < BATCH_SIZE) {
@@ -66,6 +69,7 @@ export const dataProcesser = async (data: TJSONData) => {
 		}
 
 		const results = await Promise.all(embeddedChunks);
+		console.log("Generating embeddings");
 		const values = results.map((result) => {
 			return {
 				source: entryHash,
@@ -75,7 +79,9 @@ export const dataProcesser = async (data: TJSONData) => {
 		});
 
 		// we don't need to batch because we are performing only insert operation.
+		console.log("Updating embedding to db");
 		await db.insert(pknw_base).values(values);
 		embeddedChunks = [];
 	}
+	console.log("✅ embedding generated and inserted to db");
 };
