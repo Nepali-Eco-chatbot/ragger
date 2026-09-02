@@ -26,7 +26,7 @@ jobs:
       - name: "setting up env"
         run: |
           echo "DATABASE_URL=${{secrets.DATABASE_URL}}" >> .env 
-          ehco "DATABASE_AUTH_TOKEN=${{secrets.DATABASE_AUTH_TOKEN}}" >> .env
+          echo "DATABASE_AUTH_TOKEN=${{secrets.DATABASE_AUTH_TOKEN}}" >> .env
 
       - name: "Pipeline" 
         env:
