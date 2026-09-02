@@ -33,15 +33,20 @@ export const dataProcesser = async (data: TJSONData) => {
 		return;
 	}
 
+	console.log("updating hash-store");
 	const entryHash = await updateHashStore(stringData);
 	const fileName = `${entryHash}.${data.type}`;
+	console.log("✅ hash-store updated");
 
+	console.log("downloading file", fileName);
 	const file = await downloadFile(data, fileName);
 	if (!file && data.type !== "SEARCH_SOURCE") {
 		console.error("[Error]: Something went wrong while downloading the file.");
 		return;
 	}
+	console.log("✅ file downloaded");
 
+	console.log("updating database");
 	await db.insert(knw_sources).values({
 		id: entryHash,
 		...data,
