@@ -30,6 +30,8 @@ jobs:
 
       - name: "Pipeline" 
         env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
           jsonData: ${{inputs.jsonData}}
         run: |
           echo "Running the script"
