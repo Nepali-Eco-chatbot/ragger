@@ -5,7 +5,7 @@ on:
     branches: main
 
 jobs:
-  setting and running test:
+  setting-and-running-test:
     runs-on: ubuntu-latest
     environment: ragger
     steps:  
