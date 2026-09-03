@@ -6,7 +6,7 @@ import { knw_sources, pknw_base } from "../db/schema";
 import { chunkData } from "./chunker";
 import { Embedder } from "./embedder";
 import { DEBUG } from "..";
-import type { SQL } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 const embedder = await new Embedder().init();
 
@@ -74,12 +74,13 @@ export const dataProcesser = async (data: TJSONData) => {
 			return {
 				source: entryHash,
 				content: result.chunk,
-				embedding: result.embedding as any,
+				embedding: Array.from(result.embedding),
 			};
 		});
 
-		// we don't need to batch because we are performing only insert operation.
 		if (DEBUG) console.log("Updating embedding to db");
+
+		// we don't need to batch because we are performing only insert operation.
 		await db.insert(pknw_base).values(values);
 		embeddedChunks = [];
 	}

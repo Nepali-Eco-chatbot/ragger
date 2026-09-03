@@ -22,6 +22,7 @@ export const DEBUG = process.env.DEBUG == "true";
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 
+	console.log(`[Debug Mode]: ${DEBUG}`);
 	for (let data of jsonData) {
 		console.log(`[Processing]: ${JSON.stringify(data)}`);
 		try {

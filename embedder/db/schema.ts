@@ -31,15 +31,6 @@ export const pknw_base = sqliteTable("pknw_base", {
 	source: text().references(() => knw_sources.id, { onDelete: "cascade" }),
 });
 
-/**
- * will be called when the db runs
- * see ./index.ts:10
- */
-export const pknw_base_idx = sql`
-  CREATE INDEX IF NOT EXISTS documents_embedding_idx 
-  ON ${pknw_base}(libsql_vector_idx(embedding, 'metric=cosine'));
-`;
-
 export const knw_sources_types = ["PDF", "ATRICLES", "SEARCH_SOURCE", "CSV"] as const;
 
 // knowledge source
