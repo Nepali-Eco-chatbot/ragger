@@ -17,14 +17,20 @@ if (!process.env.DATABASE_URL || !process.env.DATABASE_AUTH_TOKEN) {
 	throw new Error("Invalid env setup");
 }
 
-export const DEBUG = process.env.DEBUG;
+export const DEBUG = process.env.DEBUG == "true";
 
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 
 	for (let data of jsonData) {
 		console.log(`[Processing]: ${JSON.stringify(data)}`);
-		await dataProcesser(data);
+		try {
+			await dataProcesser(data);
+		} catch (e) {
+			console.error(e);
+			console.error("Something went wrong while processing data");
+			continue;
+		}
 		console.log(`[done]: ✅`);
 	}
 } catch (e) {
