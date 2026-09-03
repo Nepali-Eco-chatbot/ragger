@@ -1,0 +1,27 @@
+name: Tests 
+
+on: 
+  push:
+    branches: main
+
+jobs:
+  setting and running test:
+    runs-on: ubuntu-latest
+    environment: ragger
+    steps:  
+      - name: "Checking out the repo"
+        uses: actions/checkout@v4 
+
+      - name: "Installing bun"
+        uses: oven-sh/setup-bun@v2
+
+      - name: "Setup embedder"
+        run: | 
+          cd embedder
+          bun i 
+          bun run setup
+
+      - name: "testing things"
+        run: | 
+          cd embedder
+          bun run test

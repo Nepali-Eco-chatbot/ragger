@@ -27,11 +27,6 @@ jobs:
           bun i 
           bun run setup
 
-      - name: "testing things"
-        run: | 
-          cd embedder
-          bun run test
-
       - name: "Pipeline" 
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
