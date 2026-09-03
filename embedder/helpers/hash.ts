@@ -8,9 +8,18 @@ export const checkHashStore = async (jsonString: string): Promise<boolean> => {
 	const file = Bun.file(path);
 
 	const exists = await file.exists();
+	console.log("file existance", {
+		exists,
+	});
 	if (!exists) return false;
 
-	const includes = (await file.text()).includes(hash);
+	const fileText = await file.text();
+	const includes = fileText.includes(hash);
+	console.log({
+		fileText,
+		includes,
+		hash,
+	});
 	return includes;
 };
 
