@@ -13,7 +13,7 @@ export const chunkData = ({
 	fileName: string;
 	data: TJSONData;
 }): AsyncGenerator<Chunk, void, unknown> => {
-	const filePath = join(process.cwd(), fileName);
+	const filePath = join(process.cwd(), `./downloads/${fileName}`);
 
 	console.log({
 		filePath,
