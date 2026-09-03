@@ -5,6 +5,8 @@ import { db } from "../db";
 import { knw_sources, pknw_base } from "../db/schema";
 import { chunkData } from "./chunker";
 import { Embedder } from "./embedder";
+import { DEBUG } from "..";
+import type { SQL } from "drizzle-orm";
 
 const embedder = await new Embedder().init();
 
@@ -33,56 +35,54 @@ export const dataProcesser = async (data: TJSONData) => {
 		return;
 	}
 
-	console.log("updating hash-store");
+	if (DEBUG) console.log("updating hash-store");
 	const entryHash = await updateHashStore(stringData);
 	const fileName = `${entryHash}.${data.type}`;
-	console.log("✅ hash-store updated");
-
-	console.log("downloading file", fileName);
+	if (DEBUG) console.log("✅ hash-store updated");
+	if (DEBUG) console.log("downloading file", fileName);
 	const file = await downloadFile(data, fileName);
 	if (!file && data.type !== "SEARCH_SOURCE") {
 		console.error("[Error]: Something went wrong while downloading the file.");
 		return;
 	}
-	console.log("✅ file downloaded");
-
-	console.log("updating database");
+	if (DEBUG) console.log("✅ file downloaded");
+	if (DEBUG) console.log("updating database");
 	await db.insert(knw_sources).values({
 		id: entryHash,
 		...data,
 	});
-	console.log("✅ database updated");
+	if (DEBUG) console.log("✅ database updated");
 
 	if (data.type === "SEARCH_SOURCE") {
 		return;
 	}
-
-	console.log("Chunking data");
+	if (DEBUG) console.log("Chunking data");
 	const chunkedData = chunkData({ fileName, data });
 	let embeddedChunks: Promise<TEmbeddedChunk>[] = [];
-	console.log("✅ data chunked");
+	if (DEBUG) console.log("✅ data chunked");
 
 	for await (const chunk of chunkedData) {
 		if (embeddedChunks.length < BATCH_SIZE) {
-			console.log("embedding chunks");
+			if (DEBUG) console.log("embedding chunk", chunk.contextualized);
 			embeddedChunks.push(embedder.embed(chunk.contextualized));
 			continue;
 		}
 
 		const results = await Promise.all(embeddedChunks);
-		console.log("Generating embeddings");
+		if (DEBUG) console.log("Generating embeddings");
 		const values = results.map((result) => {
 			return {
 				source: entryHash,
 				content: result.chunk,
-				embedding: result.embedding,
+				embedding: result.embedding as any,
 			};
 		});
 
 		// we don't need to batch because we are performing only insert operation.
-		console.log("Updating embedding to db");
+		if (DEBUG) console.log("Updating embedding to db");
 		await db.insert(pknw_base).values(values);
 		embeddedChunks = [];
 	}
-	console.log("✅ embedding generated and inserted to db");
+
+	if (DEBUG) console.log("✅ embedding generated and inserted to db");
 };

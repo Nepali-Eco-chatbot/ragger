@@ -28,7 +28,7 @@ export class Embedder {
 
 		return {
 			chunk,
-			embedding: embedding.tolist(),
+			embedding: embedding.data,
 		};
 	};
 }

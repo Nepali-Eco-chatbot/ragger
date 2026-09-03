@@ -1,5 +1,6 @@
 import { appendFile } from "node:fs/promises";
 import { join } from "node:path";
+import { DEBUG } from "../index";
 
 export const checkHashStore = async (jsonString: string): Promise<boolean> => {
 	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
@@ -8,18 +9,21 @@ export const checkHashStore = async (jsonString: string): Promise<boolean> => {
 	const file = Bun.file(path);
 
 	const exists = await file.exists();
-	console.log("file existance", {
-		exists,
-	});
+	if (DEBUG)
+		console.log("file existance", {
+			exists,
+		});
 	if (!exists) return false;
 
 	const fileText = await file.text();
 	const includes = fileText.includes(hash);
-	console.log({
-		fileText,
-		includes,
-		hash,
-	});
+
+	if (DEBUG)
+		console.log({
+			fileText,
+			includes,
+			hash,
+		});
 	return includes;
 };
 

@@ -17,6 +17,8 @@ if (!process.env.DATABASE_URL || !process.env.DATABASE_AUTH_TOKEN) {
 	throw new Error("Invalid env setup");
 }
 
+export const DEBUG = process.env.DEBUG;
+
 try {
 	const jsonData: TJSONData[] = JSON.parse(mayBeJsonData);
 

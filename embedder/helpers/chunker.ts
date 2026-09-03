@@ -1,6 +1,7 @@
 import type { TJSONData } from "../types/base";
 import { streamFileChunks, type Chunk } from "docling.rs";
 import { join } from "node:path";
+import { DEBUG } from "../index";
 
 const tokenizerPath = join(process.cwd(), "./downloads/tokenizer.json");
 
@@ -15,10 +16,11 @@ export const chunkData = ({
 }): AsyncGenerator<Chunk, void, unknown> => {
 	const filePath = join(process.cwd(), `./downloads/${fileName}`);
 
-	console.log({
-		filePath,
-		tokenizerPath,
-	});
+	if (DEBUG)
+		console.log({
+			filePath,
+			tokenizerPath,
+		});
 
 	return streamFileChunks(filePath, {
 		chunker: "hybrid",
