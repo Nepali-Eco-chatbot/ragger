@@ -36,6 +36,8 @@ export const dataProcesser = async (data: TJSONData) => {
 	}
 
 	if (DEBUG) console.log("updating hash-store");
+
+	// TODO: Not updating hash store here
 	const entryHash = await updateHashStore(stringData);
 	const fileName = `${entryHash}.${data.type}`;
 	if (DEBUG) console.log("✅ hash-store updated");
@@ -85,5 +87,6 @@ export const dataProcesser = async (data: TJSONData) => {
 		embeddedChunks = [];
 	}
 
+	// TODO: Update hash store here.
 	if (DEBUG) console.log("✅ embedding generated and inserted to db");
 };
