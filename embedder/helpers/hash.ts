@@ -1,10 +1,14 @@
 import { appendFile } from "node:fs/promises";
 import { join } from "node:path";
 import { DEBUG } from "../index";
+//calculates the hash without updating the hash-store
+export const getHash = (jsonString: string): string => {
+	return Bun.hash(jsonString).toString();
+};
 
 export const checkHashStore = async (jsonString: string): Promise<boolean> => {
 	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
+	const hash = getHash(jsonString);
 	const path = join(process.cwd(), "hash-store");
 	const file = Bun.file(path);
 
@@ -29,7 +33,7 @@ export const checkHashStore = async (jsonString: string): Promise<boolean> => {
 
 export const updateHashStore = async (jsonString: string): Promise<string> => {
 	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
+	const hash = getHash(jsonString);
 
 	const path = join(process.cwd(), "hash-store");
 	const file = Bun.file(path);

@@ -1,5 +1,5 @@
 import type { TEmbeddedChunk, TJSONData } from "../types/base";
-import { checkHashStore, updateHashStore } from "./hash";
+import { checkHashStore, getHash, updateHashStore } from "./hash";
 import { downloadFile } from "./downloader";
 import { db } from "../db";
 import { knw_sources, pknw_base } from "../db/schema";
@@ -38,7 +38,7 @@ export const dataProcesser = async (data: TJSONData) => {
 	if (DEBUG) console.log("updating hash-store");
 
 	// TODO: Not updating hash store here
-	const entryHash = await updateHashStore(stringData);
+	const entryHash = getHash(stringData);
 	const fileName = `${entryHash}.${data.type}`;
 	if (DEBUG) console.log("✅ hash-store updated");
 	if (DEBUG) console.log("downloading file", fileName);
@@ -56,8 +56,9 @@ export const dataProcesser = async (data: TJSONData) => {
 	if (DEBUG) console.log("✅ database updated");
 
 	if (data.type === "SEARCH_SOURCE") {
-		return;
-	}
+	await updateHashStore(stringData);
+	return;
+}
 	if (DEBUG) console.log("Chunking data");
 	const chunkedData = chunkData({ fileName, data });
 	let embeddedChunks: Promise<TEmbeddedChunk>[] = [];
@@ -88,5 +89,7 @@ export const dataProcesser = async (data: TJSONData) => {
 	}
 
 	// TODO: Update hash store here.
-	if (DEBUG) console.log("✅ embedding generated and inserted to db");
+if (DEBUG) console.log("✅ embedding generated and inserted to db");
+await updateHashStore(stringData);
+if (DEBUG) console.log("✅ hash-store updated");
 };
