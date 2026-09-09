@@ -1,46 +1,53 @@
 import { appendFile } from "node:fs/promises";
 import { join } from "node:path";
-import { DEBUG } from "../index";
+const DEBUG = process.env.DEBUG === "true";
+//calculates the hash without updating the hash-store
+export const getHash = (jsonString: string): string => {
+  return Bun.hash(jsonString).toString();
+};
 
 export const checkHashStore = async (jsonString: string): Promise<boolean> => {
-	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
-	const path = join(process.cwd(), "hash-store");
-	const file = Bun.file(path);
+  // hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
+  const hash = getHash(jsonString);
+  const path = join(process.cwd(), "hash-store");
+  const file = Bun.file(path);
 
-	const exists = await file.exists();
-	if (DEBUG)
-		console.log("file existance", {
-			exists,
-		});
-	if (!exists) return false;
+  const exists = await file.exists();
 
-	const fileText = await file.text();
-	const includes = fileText.includes(hash);
+  if (DEBUG)
+    console.log("file existance", {
+      exists,
+    });
 
-	if (DEBUG)
-		console.log({
-			fileText,
-			includes,
-			hash,
-		});
-	return includes;
+  if (!exists) return false;
+
+  const fileText = await file.text();
+  const includes = fileText.includes(hash);
+
+  if (DEBUG)
+    console.log({
+      fileText,
+      includes,
+      hash,
+    });
+
+  return includes;
 };
 
 export const updateHashStore = async (jsonString: string): Promise<string> => {
-	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
+  // hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
+  const hash = getHash(jsonString);
+  const path = join(process.cwd(), "hash-store");
+  const file = Bun.file(path);
 
-	const path = join(process.cwd(), "hash-store");
-	const file = Bun.file(path);
+  const exists = await file.exists();
 
-	const exists = await file.exists();
-	if (exists) {
-		const isHashPresent = (await file.text()).includes(hash);
-		if (isHashPresent) return hash;
-	}
+  if (exists) {
+    const isHashPresent = (await file.text()).includes(hash);
+    if (isHashPresent) return hash;
+  }
 
-	await appendFile(path, `${hash}\n`);
+  await appendFile(path, `${hash}\n`);
 
-	return hash;
+  return hash;
 };
