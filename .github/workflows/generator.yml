@@ -37,20 +37,3 @@ jobs:
           cd embedder
           echo "Running the script"
           bun run index.ts "$jsonData"
-
-      - name: "update the hash-store"
-        if: always()
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          changes=$(git diff -- ./embedder/hash-store)
-          if [[ -z "$changes" ]];then
-            echo "no changes"
-            exit 0
-          fi
-
-          echo "comitting changes"
-          git add ./embedder/hash-store
-          git commit -m "[automated] updating hash-store"
-          git push origin main
