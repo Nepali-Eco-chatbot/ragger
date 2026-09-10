@@ -1,12 +1,11 @@
 import type { TEmbeddedChunk, TJSONData } from "../types/base";
-import { getHash } from "./hash";
+import { checkHashStore, getHash } from "./hash";
 import { downloadFile } from "./downloader";
 import { db } from "../db";
 import { knw_sources, pknw_base } from "../db/schema";
 import { chunkData } from "./chunker";
 import { Embedder } from "./embedder";
 import { DEBUG } from "..";
-import { sql } from "drizzle-orm";
 
 const embedder = await new Embedder().init();
 
@@ -21,7 +20,7 @@ const BATCH_SIZE = 50;
  * Processes the given `TJSONData` in the following order.
  * - checks if already processed.
  * - if yes ends the execution.
- * - if not generates a hash and store it in hash-store.
+ * - if not generates a hash.
  * - downloads the file.
  * - generates the embeddable chunks.
  * - batches in a group of `BATCH_SIZE` items.
@@ -30,17 +29,11 @@ const BATCH_SIZE = 50;
 export const dataProcesser = async (data: TJSONData) => {
   const stringData = JSON.stringify(data);
   const entryHash = getHash(stringData);
-
-  const existingSource = await db
-    .select()
-    .from(knw_sources)
-    .where(sql`${knw_sources.id} = ${entryHash}`);
-
-  if (existingSource.length > 0) {
+  if (await checkHashStore(stringData)) {
     console.log("Source already present skipping!");
     return;
   }
-  // TODO: Not updating hash store here
+
   const fileName = `${entryHash}.${data.type}`;
   if (DEBUG) console.log("hash calculated");
   if (DEBUG) console.log("downloading file", fileName);
@@ -50,12 +43,6 @@ export const dataProcesser = async (data: TJSONData) => {
     return;
   }
   if (DEBUG) console.log("✅ file downloaded");
-  if (DEBUG) console.log("updating database");
-  await db.insert(knw_sources).values({
-    id: entryHash,
-    ...data,
-  });
-  if (DEBUG) console.log("✅ database updated");
 
   if (data.type === "SEARCH_SOURCE") {
     return;
@@ -64,6 +51,12 @@ export const dataProcesser = async (data: TJSONData) => {
   const chunkedData = chunkData({ fileName, data });
   let embeddedChunks: Promise<TEmbeddedChunk>[] = [];
   if (DEBUG) console.log("✅ data chunked");
+  if (DEBUG) console.log("updating database");
+  await db.insert(knw_sources).values({
+    id: entryHash,
+    ...data,
+  });
+  if (DEBUG) console.log("✅ database updated");
 
   for await (const chunk of chunkedData) {
     if (embeddedChunks.length < BATCH_SIZE) {
@@ -88,6 +81,5 @@ export const dataProcesser = async (data: TJSONData) => {
     await db.insert(pknw_base).values(values);
     embeddedChunks = [];
   }
-  // TODO: Update hash store here.
   if (DEBUG) console.log("✅ embedding generated and inserted to db");
 };
