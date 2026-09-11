@@ -1,46 +1,26 @@
-import { appendFile } from "node:fs/promises";
-import { join } from "node:path";
+import { sql } from "drizzle-orm";
+import { db } from "../db";
+import { knw_sources } from "../db/schema";
 import { DEBUG } from "../index";
 
-export const checkHashStore = async (jsonString: string): Promise<boolean> => {
-	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
-	const path = join(process.cwd(), "hash-store");
-	const file = Bun.file(path);
-
-	const exists = await file.exists();
-	if (DEBUG)
-		console.log("file existance", {
-			exists,
-		});
-	if (!exists) return false;
-
-	const fileText = await file.text();
-	const includes = fileText.includes(hash);
-
-	if (DEBUG)
-		console.log({
-			fileText,
-			includes,
-			hash,
-		});
-	return includes;
+// calculates the hash without updating the hash-store
+export const getHash = (jsonString: string): string => {
+  return Bun.hash(jsonString).toString();
 };
+export const checkHashStore = async (jsonString: string): Promise<boolean> => {
+  const hash = getHash(jsonString);
 
-export const updateHashStore = async (jsonString: string): Promise<string> => {
-	// hash using [wyhash](https://bun.com/docs/runtime/hashing#bun-hash)
-	const hash = Bun.hash(jsonString).toString();
+  const existingSource = await db
+    .select()
+    .from(knw_sources)
+    .where(sql`${knw_sources.id} = ${hash}`);
 
-	const path = join(process.cwd(), "hash-store");
-	const file = Bun.file(path);
+  if (DEBUG) {
+    console.log("hash exists in database", {
+      hash,
+      exists: existingSource.length > 0,
+    });
+  }
 
-	const exists = await file.exists();
-	if (exists) {
-		const isHashPresent = (await file.text()).includes(hash);
-		if (isHashPresent) return hash;
-	}
-
-	await appendFile(path, `${hash}\n`);
-
-	return hash;
+  return existingSource.length > 0;
 };
