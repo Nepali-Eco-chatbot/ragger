@@ -22,6 +22,10 @@ jobs:
           bun run setup
 
       - name: "testing things"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+          DEBUG: false
         run: | 
           cd embedder
           bun run test
