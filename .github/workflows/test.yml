@@ -7,7 +7,7 @@ on:
 jobs:
   setting-and-running-test:
     runs-on: ubuntu-latest
-    environment: ragger
+    environment: test
     steps:  
       - name: "Checking out the repo"
         uses: actions/checkout@v4 
@@ -23,8 +23,7 @@ jobs:
 
       - name: "testing things"
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+          NODE_ENV: test
           DEBUG: false
         run: | 
           cd embedder
