@@ -2,9 +2,7 @@ name: Tests
 
 on: 
   push:
-    branches:
-      - main
-      - fix/pipeline-tests
+    branches: main
 
 jobs:
   setting-and-running-test:
