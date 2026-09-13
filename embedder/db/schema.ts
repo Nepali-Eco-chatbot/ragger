@@ -11,9 +11,10 @@ export const float32Array = customType<{
 	dataType(config) {
 		return `F32_BLOB(${config.dimensions})`;
 	},
-	fromDriver(value: Buffer) {
-		return Array.from(new Float32Array(value.buffer));
-	},
+	fromDriver(value: Buffer | ArrayBuffer) {
+	const arrayBuffer = value instanceof ArrayBuffer ? value : value.buffer;
+	return Array.from(new Float32Array(arrayBuffer));
+},
 	toDriver(value: number[]) {
 		return sql`vector32(${JSON.stringify(value)})`;
 	},

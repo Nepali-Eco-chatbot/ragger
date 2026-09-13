@@ -7,7 +7,7 @@
 		"setup:docling": "curl -fsSL https://raw.githubusercontent.com/docling-project/docling.rs/master/scripts/install/download_dependencies.sh | sh",
 		"setup:tokenizer": "wget --directory-prefix=./downloads  https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/tokenizer.json ",
 		"setup": "bun run --parallel 'setup:*'",
-		"test": "drizzle-kit push && bun test",
+		"test": "drizzle-kit push && bun test --env-file /dev/null",
 		"db:push": "drizzle-kit push"
 	},
 	"dependencies": {
@@ -18,7 +18,7 @@
 		"sharp": "^0.35.4"
 	},
 	"devDependencies": {
-		"@types/bun": "^1.4.0",
+		"@types/bun": "^1.4.2",
 		"drizzle-kit": "^1.0.0-rc.4"
 	},
 	"peerDependencies": {
