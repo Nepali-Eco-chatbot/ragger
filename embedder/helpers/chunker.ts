@@ -1,7 +1,7 @@
 import type { TJSONData } from "../types/base";
 import { streamFileChunks, type Chunk } from "docling.rs";
 import { join } from "node:path";
-import { DEBUG } from "../index";
+import { DEBUG } from "./config";
 
 const tokenizerPath = join(process.cwd(), "./downloads/tokenizer.json");
 

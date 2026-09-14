@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db";
 import { knw_sources } from "../db/schema";
-import { DEBUG } from "../index";
+import { DEBUG } from "./config";
 
 // calculates the hash without updating the hash-store
 export const getHash = (jsonString: string): string => {
