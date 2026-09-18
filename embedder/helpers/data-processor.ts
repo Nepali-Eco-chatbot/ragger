@@ -38,7 +38,7 @@ export const dataProcesser = async (data: TJSONData) => {
 		return;
 	}
 
-	const extension = data.type === "ATRICLES" ? "html" : data.type?.toLowerCase();
+	const extension = data.type === "ATRICLE" ? "html" : data.type?.toLowerCase();
 	const fileName = `${entryHash}.${extension}`;
 	if (DEBUG) console.log("downloading file", fileName);
 	const file = await downloadFile(data, fileName);

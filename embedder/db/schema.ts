@@ -33,7 +33,7 @@ export const pknw_base = sqliteTable("pknw_base", {
 	source: text().references(() => knw_sources.id, { onDelete: "cascade" }),
 });
 
-export const knw_sources_types = ["PDF", "ATRICLES", "SEARCH_SOURCE", "CSV"] as const;
+export const knw_sources_types = ["PDF", "ATRICLE", "SEARCH_SOURCE", "CSV"] as const;
 
 // knowledge source
 export const knw_sources = sqliteTable("knw_sources", {
