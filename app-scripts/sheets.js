@@ -41,6 +41,7 @@ function updateDataset() {
 
 	const jsonData = [];
 	const heading = table[0].map((h) => h.toLowerCase());
+
 	table.forEach((row, index) => {
 		if (index == 0) return;
 		const entry = {};
@@ -49,11 +50,12 @@ function updateDataset() {
 			entry[heading[index]] = column;
 		});
 
+		entry["description"] = "n/a";
+
 		jsonData.push(entry);
 	});
 
 	Logger.log("Parsed all the data");
-	// Logger.log(JSON.stringify(jsonData, null, 2));
 
 	const properties = PropertiesService.getScriptProperties();
 
