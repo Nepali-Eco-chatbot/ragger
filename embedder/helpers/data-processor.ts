@@ -37,7 +37,8 @@ export const dataProcesser = async (data: TJSONData) => {
 		return;
 	}
 
-	const fileName = `${entryHash}.${data.type}`;
+	const extension = data.type === "ATRICLES" ? "html" : data.type?.toLowerCase();
+	const fileName = `${entryHash}.${extension}`;
 	if (DEBUG) console.log("downloading file", fileName);
 	const file = await downloadFile(data, fileName);
 	if (!file && data.type !== "SEARCH_SOURCE") {
@@ -83,7 +84,6 @@ export const dataProcesser = async (data: TJSONData) => {
 		if (DEBUG) console.log("Updating embedding to db");
 		// we don't need to batch because we are performing only insert operation.
 		await db.insert(pknw_base).values(values);
-
 
 		embeddedChunks = [];
 	}

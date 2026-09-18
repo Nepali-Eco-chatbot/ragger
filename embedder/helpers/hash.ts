@@ -7,6 +7,7 @@ import { DEBUG } from "./config";
 export const getHash = (jsonString: string): string => {
   return Bun.hash(jsonString).toString();
 };
+
 export const checkHashStore = async (jsonString: string): Promise<boolean> => {
   const hash = getHash(jsonString);
 
