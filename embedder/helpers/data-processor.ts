@@ -32,7 +32,8 @@ export const dataProcesser = async (data: TJSONData) => {
 	const entryHash = getHash(stringData);
 	if (DEBUG) console.log("hash calculated");
 
-	if (await checkHashStore(stringData)) {
+	const isAlreadyDone = await checkHashStore(stringData);
+	if (isAlreadyDone) {
 		console.log("Source already present skipping!");
 		return;
 	}

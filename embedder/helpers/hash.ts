@@ -1,27 +1,21 @@
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import { knw_sources } from "../db/schema";
-import { DEBUG } from "./config";
 
 // calculates the hash without updating the hash-store
 export const getHash = (jsonString: string): string => {
-  return Bun.hash(jsonString).toString();
+	return Bun.hash(jsonString).toString();
 };
 
 export const checkHashStore = async (jsonString: string): Promise<boolean> => {
-  const hash = getHash(jsonString);
+	const hash = getHash(jsonString);
 
-  const existingSource = await db
-    .select()
-    .from(knw_sources)
-    .where(sql`${knw_sources.id} = ${hash}`);
+	const [existing] = await db
+		.select({ id: knw_sources.id })
+		.from(knw_sources)
+		.where(eq(knw_sources.id, hash))
+		.limit(1);
 
-  if (DEBUG) {
-    console.log("hash exists in database", {
-      hash,
-      exists: existingSource.length > 0,
-    });
-  }
-
-  return existingSource.length > 0;
+	return Boolean(existing);
 };
+
